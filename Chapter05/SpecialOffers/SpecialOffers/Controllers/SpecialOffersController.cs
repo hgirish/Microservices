@@ -18,7 +18,7 @@ namespace SpecialOffers.Controllers
             _eventStore = eventStore;
         }
 
-        [HttpGet("{id: int}")]
+        [HttpGet("{id:int}")]
         public ActionResult<Offer> GetOffer(int id) => _offers.ContainsKey(id) ? (ActionResult<Offer>)Ok(_offers[id]) : NotFound();
 
         [HttpPost("")]

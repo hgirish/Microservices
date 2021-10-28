@@ -17,7 +17,7 @@ namespace SpecialOffers.EventFeed
         }
 
         [HttpGet("")]
-        public ActionResult<EventFeedEvent[]> GetEvents([FromQuery] int start, [FromQuery] int end)
+        public ActionResult<EventFeedEvent[]> GetEvents([FromQuery]int start, [FromQuery]int end)
         {
             if (start < 0 || end < start)
             {
