@@ -13,7 +13,7 @@ namespace LoyaltyProgramUnitTests
             if (start > 100)
             {
                 
-                    Enumerable.Empty<EventFeedEvent>();
+                 return    Enumerable.Empty<EventFeedEvent>();
             }
             return Enumerable.Range(start, end - start)
                 .Select(i => new EventFeedEvent
