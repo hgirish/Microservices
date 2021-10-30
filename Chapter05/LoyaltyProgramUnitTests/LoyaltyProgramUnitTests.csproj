@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Loyalty\LoyaltyProgram\LoyaltyProgram.csproj" />
+    <ProjectReference Include="..\SpecialOffers\SpecialOffers\SpecialOffers.csproj" />
   </ItemGroup>
 
 </Project>
