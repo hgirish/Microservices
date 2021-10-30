@@ -33,6 +33,9 @@ namespace LoyaltyProgram.Users
             ? Ok(RegisteredUsers[userId])
             : NotFound();
 
+        [HttpGet("fail")]
+        public IActionResult Fail() => throw new NotImplementedException();
+
         private LoyaltyProgramUser RegisterUser(LoyaltyProgramUser user)
         {
             var userId = RegisteredUsers.Count;

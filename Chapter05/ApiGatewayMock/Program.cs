@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using Polly.Extensions.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -15,7 +18,24 @@ namespace ApiGatewayMock
         static async Task Main(string[] args)
         {
             var host = args.Length > 0 ? args[0] : "https://localhost:5001";
-            var client = new LoyaltyProgramClient(new HttpClient { BaseAddress = new Uri(host) });
+            
+
+            var exponentialRetryPolicy = Policy<HttpResponseMessage>
+                .Handle<HttpRequestException>()
+                .OrTransientHttpStatusCode()
+                .WaitAndRetryAsync(
+                3,
+                attemp => TimeSpan.FromMilliseconds(100 * Math.Pow(2, attemp)));
+
+            var circuitBreakerPolicy = Policy<HttpResponseMessage>.Handle<HttpRequestException>().OrTransientHttpStatusCode()
+                .CircuitBreakerAsync(5, TimeSpan.FromMinutes(1));
+
+            var serviceProvider = new ServiceCollection()
+                .AddHttpClient<LoyaltyProgramClient>()
+                .AddPolicyHandler(request => request.Method == HttpMethod.Get ? circuitBreakerPolicy : exponentialRetryPolicy)
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(host))
+                .Services.BuildServiceProvider();
+            var client = serviceProvider.GetService<LoyaltyProgramClient>();
 
             var processCommand =
                 new Dictionary<char, (string description, Func<string, Task<(bool, HttpResponseMessage)>> handler)>

@@ -27,6 +27,11 @@ namespace EventConsumer
                 var events = await JsonSerializer.DeserializeAsync<SpecialOfferEvent[]>(content) ?? new SpecialOfferEvent[0];
                 foreach (var evt in events)
                 {
+                    dynamic eventData = evt.Content;
+                    if (ShouldSendNotification(eventData))
+                    {
+                        await SendNotification(eventData);
+                    }
                     Console.WriteLine(evt);
                     start = Math.Max(start, evt.SequenceNumber + 1);
                 }
@@ -35,6 +40,15 @@ namespace EventConsumer
             Task SaveStartIdToDataStore(long startId) => Task.CompletedTask;
         }
 
-       
+        private static Task SendNotification(dynamic eventData)
+        {
+            Console.WriteLine(eventData);
+            return Task.CompletedTask;
+        }
+
+        private static bool ShouldSendNotification(dynamic eventData)
+        {
+            return true;
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Polly;
+using Polly.Extensions.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -10,6 +12,13 @@ namespace ApiGatewayMock
 {
    public class LoyaltyProgramClient
     {
+        private static readonly IAsyncPolicy<HttpResponseMessage> ExponentialRetryPolicy =
+            Policy<HttpResponseMessage>
+            .Handle<HttpRequestException>()
+            .OrTransientHttpStatusCode()
+            .WaitAndRetryAsync(3,
+                attempt => TimeSpan.FromMilliseconds(100 * Math.Pow(2, attempt)));
+
         private readonly HttpClient _httpClient;
 
         public LoyaltyProgramClient(HttpClient httpClient)
