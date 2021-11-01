@@ -37,6 +37,16 @@ namespace LoyaltyProgram
       
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            /* Middleware lambda example
+            app.Use(next => ctx =>
+            {
+                Console.WriteLine("Got request in lambda middleware");
+                Console.WriteLine($"Request Path:{ctx.Request.Path}");
+                return next(ctx);
+            });
+            */
+            // app.Use(next => new ConsoleMiddleware(next).Invoke);
+            // app.UseMiddleware<ConsoleMiddleware>();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
