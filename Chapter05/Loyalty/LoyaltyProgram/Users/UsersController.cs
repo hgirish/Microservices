@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +24,15 @@ namespace LoyaltyProgram.Users
         }
 
         [HttpPut("{userId:int}")]
-        public LoyaltyProgramUser UpdateUser(int userId, [FromBody] LoyaltyProgramUser user)
+        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
+        public ActionResult<LoyaltyProgramUser> UpdateUser(int userId, [FromBody] LoyaltyProgramUser user)
         {
+            var hasUserId = int.TryParse(
+                User.Claims.FirstOrDefault(c => c.Type == "userid")?.Value, out var userIdFromToken);
+            if (!hasUserId || userId != userIdFromToken)
+            {
+                return Unauthorized();
+            }
             return RegisteredUsers[userId] = user;
         }
 
